@@ -27,9 +27,14 @@ const Calendra = () => {
     }, [notes]);
 
     const generateDaysOfWeek = () => {
-        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        return daysOfWeek.map(day => (
-            <div key={day} className="text-center text-gray-600">{day}</div>
+        const daysOfWeekTamil = ['திங்கள்', 'செவ்வாய்', 'புதன்', 'வியாழன்', 'வெள்ளி', 'சனி', 'ஞாயிற்று'];
+        const daysOfWeekEnglish = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        return daysOfWeekTamil.map((day, index) => (
+            <div key={day} className="py-4 text-left text-gray-200">
+                <div>{day}</div>
+                <div className="text-xs text-gray-600 ">{daysOfWeekEnglish[index]}</div>
+            </div>
         ));
     };
 
@@ -40,6 +45,8 @@ const Calendra = () => {
         const endDate = new Date(year, month + 1, 0);
         const startDay = startDate.getDay();
 
+        const startOfWeek = (startDay === 0) ? 6 : startDay - 1;
+
         const handleDateClick = (day) => {
             setSelectedDate(day);
             const note = notes[day.toDateString()] || "";
@@ -48,7 +55,7 @@ const Calendra = () => {
             setShowModal(true);
         };
 
-        for (let i = 0; i < startDay; i++) {
+        for (let i = 0; i < startOfWeek; i++) {
             days.push(<div key={`empty-${i}`} className="border border-transparent "></div>);
         }
 
@@ -58,11 +65,11 @@ const Calendra = () => {
             const isSaturday = currentDate.getDay() === 6;
             const isSunday = currentDate.getDay() === 0;
             const hasNote = notes[currentDate.toDateString()];
-            const dayClasses = `border text-center rounded-lg py-5 ${isToday ? 'bg-red-600' : ''} ${isSaturday || isSunday ? 'text-red-500' : ''} ${hasNote ? 'text-green-500 underline underline-offset-4 ' : ''}`;
+            const dayClasses = `border text-center rounded-md p-1 md:p-2 lg:p-4 xl:p-4 ${isToday ? 'bg-red-600' : ''} ${isSaturday || isSunday ? 'text-red-500' : ''} ${hasNote ? 'text-green-500 underline underline-offset-4' : ''}`;
 
             days.push(
                 <div key={i} className={dayClasses} onClick={() => handleDateClick(currentDate)}>
-                    {i}
+                    <div>{i}</div>
                 </div>
             );
         }
@@ -113,8 +120,9 @@ const Calendra = () => {
     };
 
     return (
-        <div className='w-screen min-h-screen bg-gradient-to-b from-black to-gray-900 text-white py-12 px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 '>
-            <div className="mx-auto max-w-lg">
+        <div className='w-screen h-screen bg-gradient-to-b from-black to-gray-900 text-white py-12 px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 '>
+            <div className="mx-auto max-w-md">
+
                 <div className="flex flex-col sm:flex-row justify-between text-red-600 items-center mb-4">
                     <div className=" flex justify-between items-center w-full ">
                         <button onClick={handlePrevMonth} className="px-2 py-1 font-bold rounded hover:scale-110 duration-500 focus:outline-none"><IoIosArrowBack size={20} /></button>
@@ -122,15 +130,15 @@ const Calendra = () => {
 
                         <button className=''>
                             <AiOutlineBars size={20} onClick={handleShowAllNotes} />
-                            </button>
+                        </button>
 
                         <button onClick={handleNextMonth} className="px-2 py-1 ml-2 font-bold rounded hover:scale-110 duration-500 focus:outline-none"><IoIosArrowForward size={20} /></button>
                     </div>
-
                 </div>
-                <div className="grid grid-cols-7 px-1 gap-1">
-                    {generateDaysOfWeek()}
-                    {generateCalendarDays(currentDate.getFullYear(), currentDate.getMonth())}
+
+                <div className="flex justify-between h-[400px] py-4 sm:h-auto md:h-auto">
+                    <p className='grid grid-rows-7 text-sm md:text-md lg:text-xl '>{generateDaysOfWeek()}</p>
+                    <p className='grid grid-rows-7 grid-flow-col gap-3'>{generateCalendarDays(currentDate.getFullYear(), currentDate.getMonth())}</p>
                 </div>
             </div>
             {showModal && selectedDate && (
